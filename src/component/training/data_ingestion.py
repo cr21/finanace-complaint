@@ -12,7 +12,7 @@ import requests
 import uuid
 import json
 import re
-# from src.config.spark_manager import spark_session
+from src.config.spark_manager import spark_session
 from typing import List
 
 @dataclass
@@ -29,6 +29,9 @@ class DataIngestion:
         self.failed_download_urls: List[DownloadURL] = []
 
     def get_required_interval(self):
+        print(self.config.from_date)
+        print(self.config.to_date)
+        print("+"*100)
         start_date  =datetime.strptime(self.config.from_date,'%Y-%m-%d')
         end_date = datetime.strptime(self.config.to_date,'%Y-%m-%d')
         n_diff_days  = (end_date-start_date).days
@@ -141,7 +144,7 @@ class DataIngestion:
             # need to handle throatling requst wait for sometime before hitting request again
             content = data.content.decode('utf-8')
             wait_second=re.findall(r'\d+', content)
-            if wait_second > 0:
+            if len(wait_second) > 0:
                 time.sleep(int(wait_second[0])+2)
             # write response to keep track of errors and exception for failure
             failed_file_path = os.path.join(self.config.failed_dir, os.path.basename(download_url.file_path))
@@ -165,8 +168,11 @@ class DataIngestion:
             file_path = download_url.file_path
             n_retry=download_url.n_retry
             url=download_url.url
-
-            os.makedirs(file_path, exist_ok=True)
+            print("download file path",file_path)
+            
+            download_dir = os.path.dirname(file_path)
+            print("download dir path ", download_dir)
+            os.makedirs(download_dir, exist_ok=True)
             # download data
 
             data = requests.get(url,params={'User-agent': f'your bot {uuid.uuid4()}'})
@@ -175,11 +181,17 @@ class DataIngestion:
             try:
                 logger.info(f"Started writing downloaded data into json file: {download_url.file_path}")
                 with open(file_path,'w') as file_obj:
-                    finance_complaint_data = list(  map(lambda x:x["_source"]),
-                                                    filter(lambda x:"_source" in x.keys(),
-                                                        json.loads(data.content)
-                                                    )
-                                                )
+                    # finance_complaint_data = list(  map(lambda x:x["_source"],
+                    #                                                 filter(lambda x:"_source" in x.keys(),
+                    #                                                 json.loads(data.content)
+                    #                                                 )
+                    #                                 )
+                    #                             )
+
+                    finance_complaint_data = list(map(lambda x: x["_source"],
+                                                      filter(lambda x: "_source" in x.keys(),
+                                                             json.loads(data.content)))
+                                                  )
                     json.dump(finance_complaint_data, file_obj)
                 logger.info(f"Downloaded data has been written into file: {download_url.file_path}")
             except Exception as exp:
@@ -200,7 +212,7 @@ class DataIngestion:
         """
         try:
             logger.info(f"Writing metadata info into metadata file.")
-            metadata_info = DataIngestionMetadata(metadata_file_path=self.config.metadata_file_path)
+            metadata_info = DataIngestionMetadata(meta_data_file_path=self.config.metadata_file_path)
             metadata_info.write_meta_info(
                                         from_date=self.config.from_date,
                                         to_date=self.config.to_date,

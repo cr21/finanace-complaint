@@ -6,7 +6,9 @@ from src.utils import read_yaml_file, write_yaml_file
 from  src.exception import FinanceException
 import sys
 from src.logger import logger
+from dataclasses import dataclass
 
+@dataclass
 class DataIngestionArtifact:
     feature_store_file_path:str
     metadata_file_path:str
@@ -26,8 +28,9 @@ class DataIngestionMetadata:
             metadata_info = DataIngestionMetaDataInfo(
                 from_date=from_date,
                 to_date=to_date,
-                data_file_path=self.metadata_path
+                metadata_file_path=self.metadata_path
             )
+            
             write_yaml_file(file_path=self.metadata_path, data=metadata_info.__dict__)
 
         except Exception as e:
