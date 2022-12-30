@@ -25,3 +25,8 @@ class DataIngestionMetaDataInfo:
     to_date:str
     metadata_file_path:str
 
+@dataclass
+class DataValidationConfig:
+    accepted_data_dir:str
+    rejected_data_dir:str
+    file_name:str

@@ -14,6 +14,11 @@ class DataIngestionArtifact:
     metadata_file_path:str
     download_dir:str
 
+@dataclass
+class DataValidationArtifact:
+    accepted_file_path:str
+    rejected_dir:str
+
 
 class DataIngestionMetadata:
     def __init__(self, meta_data_file_path) -> None:

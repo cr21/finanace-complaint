@@ -1,11 +1,12 @@
 
 from src.constant.training_pipeline_config import * 
 from src.constant import TIMESTAMP
-from src.entity.config_entity import DataIngestionConfig, TrainingPipelineConfig
+from src.entity.config_entity import DataIngestionConfig, TrainingPipelineConfig, DataValidationConfig
 from src.entity.metadata_entity import DataIngestionMetadata
 from src.logger import logger
 import os, sys
 import requests
+from src.exception import FinanceException
 import json
 from datetime import datetime
 
@@ -25,6 +26,7 @@ class FinanceConfig:
         artifact_dir = PIPELINE_ARTIFACT_DIR
         pipeline_config = TrainingPipelineConfig(pipeline_name=self.pipeline, artifact_dir=artifact_dir)
         logger.info("Training Pipeline config: {pipeline_config}")
+        self.pipeline_config=pipeline_config
         return pipeline_config
 
     def get_data_ingestion_pipeline(self, from_date=DATA_INGESTION_MIN_START_DATE,to_date=None)-> DataIngestionConfig:
@@ -67,3 +69,19 @@ class FinanceConfig:
                                                 )
         logger.info(f"Data ingestion config: {data_ingestion_config}")
         return data_ingestion_config
+
+
+    def get_data_validation_config(self)-> DataValidationConfig:
+        try:
+            pass
+        except Exception as exp:
+            raise FinanceException(exp, sys)
+        data_validation_dir = os.path.join(self.pipeline_config.artifact_dir, DATA_VALIDATION_DIR, self.timestamp) 
+        
+        dv_config = DataValidationConfig(
+                                            accepted_data_dir=os.path.join(data_validation_dir,DATA_VALIDATION_ACCEPTED_DATA_DIR),
+                                            rejected_data_dir=os.path.join(data_validation_dir,DATA_VALIDATION_REJECTED_DATA_DIR),
+                                            file_name=DATA_VALIDATION_FILE_NAME
+                                        )
+        logger.info(f"Data Validation Config info: {dv_config}")
+        return dv_config

@@ -169,7 +169,8 @@ class DataIngestion:
             download_dir = os.path.dirname(file_path)
             os.makedirs(download_dir, exist_ok=True)
             # download data
-
+            print(url)
+            print("+"*100)
             data = requests.get(url,params={'User-agent': f'your bot {uuid.uuid4()}'})
 
             # writing data to json file
@@ -183,6 +184,11 @@ class DataIngestion:
                     #                                 )
                     #                             )
 
+                    # finance_complaint_data = list(map(lambda x: x["_source"],
+                    #                                   filter(lambda x: "_source" in x.keys(),
+                    #                                          json.loads(data.content)))
+                    #                               )
+                    print(data.content)
                     finance_complaint_data = list(map(lambda x: x["_source"],
                                                       filter(lambda x: "_source" in x.keys(),
                                                              json.loads(data.content)))
