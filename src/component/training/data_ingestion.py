@@ -29,9 +29,6 @@ class DataIngestion:
         self.failed_download_urls: List[DownloadURL] = []
 
     def get_required_interval(self):
-        print(self.config.from_date)
-        print(self.config.to_date)
-        print("+"*100)
         start_date  =datetime.strptime(self.config.from_date,'%Y-%m-%d')
         end_date = datetime.strptime(self.config.to_date,'%Y-%m-%d')
         n_diff_days  = (end_date-start_date).days
@@ -168,10 +165,8 @@ class DataIngestion:
             file_path = download_url.file_path
             n_retry=download_url.n_retry
             url=download_url.url
-            print("download file path",file_path)
             
             download_dir = os.path.dirname(file_path)
-            print("download dir path ", download_dir)
             os.makedirs(download_dir, exist_ok=True)
             # download data
 
@@ -228,7 +223,6 @@ class DataIngestion:
 
     def initiate_data_ingestion(self)-> DataIngestionArtifact:
         try:
-            print("+++++"*200)
             logger.info("Start DataIngestion")
 
             #1. check if from date and to date are not same 
