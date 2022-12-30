@@ -116,7 +116,7 @@ class DataIngestion:
                 df = spark_session.read.json(json_file_path)
                 if df.count()>0:
                     df.write.mode('append').parquet(file_path)
-
+                print(f"[Data Ingestion] Cols :{df.columns}")
             return file_path
 
             
