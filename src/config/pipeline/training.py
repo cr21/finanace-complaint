@@ -1,7 +1,7 @@
 
 from src.constant.training_pipeline_config import * 
 from src.constant import TIMESTAMP
-from src.entity.config_entity import DataIngestionConfig, TrainingPipelineConfig, DataValidationConfig
+from src.entity.config_entity import DataIngestionConfig, TrainingPipelineConfig, DataValidationConfig, DataTransformationConfig
 from src.entity.metadata_entity import DataIngestionMetadata
 from src.logger import logger
 import os, sys
@@ -70,6 +70,24 @@ class FinanceConfig:
         logger.info(f"Data ingestion config: {data_ingestion_config}")
         return data_ingestion_config
 
+    def get_data_transformation_config(self)->DataTransformationConfig:
+        try:
+            data_transformation_dir = os.path.join(self.pipeline_config.artifact_dir,DATA_TRANSFORMATION_DIR, self.timestamp)
+            transformed_train_dir = os.path.join(data_transformation_dir, DATA_TRANSFORMATION_TRAIN_DIR)
+            transformed_test_dir=os.path.join(data_transformation_dir, DATA_TRANSFORMATION_TEST_DIR)
+            exported_pipeline_dir = os.path.join(data_transformation_dir, DATA_TRANSFORMATION_PIPELINE_DIR)
+            
+            data_transform_config = DataTransformationConfig(file_name=DATA_TRANSFORMATION_FILE_NAME,
+                                                            exported_pipeline_dir=exported_pipeline_dir,
+                                                            transformed_train_dir=transformed_train_dir,
+                                                            transformed_test_dir=transformed_test_dir,
+                                                            test_size=DATA_TRANSFORMATION_TEST_SIZE)
+            
+            logger.info(f"Data_TransformationConfig {data_transform_config}")
+            return data_transform_config
+
+        except Exception as exp:
+            raise FinanceException(exp, sys)
 
     def get_data_validation_config(self)-> DataValidationConfig:
         try:

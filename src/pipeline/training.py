@@ -1,9 +1,11 @@
 
 from src.config.pipeline.training import FinanceConfig
-from src.entity.config_entity import DataIngestionConfig, DataValidationConfig
-from src.entity.artifact_entity import DataIngestionArtifact, DataValidationArtifact
+from src.entity.config_entity import DataIngestionConfig, DataValidationConfig, DataTransformationConfig
+from src.entity.artifact_entity import DataIngestionArtifact, DataValidationArtifact, DataTransformationArtifact
 from src.component.training.data_ingestion import DataIngestion
 from src.component.training.data_validation import DataValidation
+from src.component.training.data_transformer import DataTransformer
+# from src.com
 from src.exception import FinanceException
 import sys
 from src.logger import logger,LOG_FILE_PATH
@@ -33,6 +35,17 @@ class TrainingPipeline:
         except Exception as exp:
             raise FinanceException(exp, sys)
 
+
+    def initiate_data_transformation(self, data_valid_artifact:DataValidationArtifact)-> DataTransformationArtifact:
+        try:
+            data_transformation_config: DataTransformationConfig = self.config.get_data_transformation_config()
+            data_transformer = DataTransformer(data_transformation_config, data_valid_artifact)
+            data_transform_artifact=data_transformer.initiate_data_transformation()
+            return data_transform_artifact
+
+        except Exception as exp:
+            raise FinanceException(exp, sys)
+
     def copy_logger_to_dump(self)->None:
         
         contents = None
@@ -49,7 +62,9 @@ class TrainingPipeline:
             
             data_ingest_artifact = self.initiate_data_ingestion()
             data_validation_artifact=self.initiate_data_validation(data_ingest_artifact)
+            # data_transformation_artifact = self.initiate_data_transformation(data_valid_artifact=data_validation_artifact)
+            print(data_validation_artifact)
             self.copy_logger_to_dump()
-            return data_validation_artifact
+            # return data_transformation_artifact
         except Exception as exp:
             raise FinanceException(exp, sys)
