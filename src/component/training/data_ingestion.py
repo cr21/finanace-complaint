@@ -116,7 +116,6 @@ class DataIngestion:
                 df = spark_session.read.json(json_file_path)
                 if df.count()>0:
                     df.write.mode('append').parquet(file_path)
-
             return file_path
 
             
@@ -169,7 +168,6 @@ class DataIngestion:
             download_dir = os.path.dirname(file_path)
             os.makedirs(download_dir, exist_ok=True)
             # download data
-
             data = requests.get(url,params={'User-agent': f'your bot {uuid.uuid4()}'})
 
             # writing data to json file
@@ -183,6 +181,10 @@ class DataIngestion:
                     #                                 )
                     #                             )
 
+                    # finance_complaint_data = list(map(lambda x: x["_source"],
+                    #                                   filter(lambda x: "_source" in x.keys(),
+                    #                                          json.loads(data.content)))
+                    #                               )
                     finance_complaint_data = list(map(lambda x: x["_source"],
                                                       filter(lambda x: "_source" in x.keys(),
                                                              json.loads(data.content)))

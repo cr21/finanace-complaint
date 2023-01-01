@@ -1,5 +1,13 @@
 from dataclasses import dataclass
 
+@dataclass
+class DataTransformationConfig:
+    file_name:str
+    exported_pipeline_dir:str
+    transformed_train_dir:str
+    transformed_test_dir:str
+    test_size:float
+
 
 @dataclass
 class TrainingPipelineConfig:
@@ -25,3 +33,8 @@ class DataIngestionMetaDataInfo:
     to_date:str
     metadata_file_path:str
 
+@dataclass
+class DataValidationConfig:
+    accepted_data_dir:str
+    rejected_data_dir:str
+    file_name:str
