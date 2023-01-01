@@ -14,20 +14,22 @@ from typing import List, Dict
 from pyspark.sql.types import TimestampType, LongType
 
 
-class FrequencyImputer(Transformer,               # Base class
+class FrequencyImputer(Estimator,               # Base class
                      HasInputCols,               # Sets up an inputCol parameter
                      HasOutputCols,              # Sets up an outputCol parameter
                      DefaultParamsReadable,     # Makes parameters readable from file
                      DefaultParamsWritable      # Makes parameters writable from file
                     ):
     
+    topCategorys = Param(Params._dummy(), "getTopCategorys", "getTopCategorys",
+                         typeConverter=TypeConverters.toListString)
     @keyword_only
-    def __init__(self) -> None:
+    def __init__(self,inputCols: List[str] = None, outputCols: List[str] = None):
         super(FrequencyImputer, self).__init__()
         self.topCategorys = Param(self, "topCategorys", "")
         self._setDefault(topCategorys="")
         kwargs = self._input_kwargs
-        print(kwargs)
+        # print(kwargs)
         self.setParams(**kwargs)
 
     @keyword_only
@@ -64,7 +66,7 @@ class FrequencyImputer(Transformer,               # Base class
             topCat = categoryCountByDesc.take(1)[0][column]
             topCategorys.append(topCat)
 
-        print(topCategorys)
+        #print(topCategorys)
 
         self.setTopCategorys(value=topCategorys)
 
@@ -91,9 +93,7 @@ class FrequencyImputerModel(FrequencyImputer, Transformer):
         inputCols = self.getInputCols()
         for outputColumn, inputColumn in zip(outputCols, inputCols):
             dataset = dataset.withColumn(outputColumn, col(inputColumn))
-            # print(dataset.columns)
-            # print(outputColumn, inputColumn)
-
+            
         dataset = dataset.na.fill(updateMissingValue)
 
         return dataset
@@ -107,13 +107,11 @@ class DerivedFeatureGenerator(Transformer,               # Base class
                      DefaultParamsWritable      # Makes parameters writable from file
                     ):
 
-    topCategorys = Param(Params._dummy(), "getTopCategorys", "getTopCategorys",
-                         typeConverter=TypeConverters.toListString)
 
 
     @keyword_only
-    def __init__(self) -> None:
-        super(self,DerivedFeatureGenerator).__init__()
+    def __init__(self,inputCols: List[str] = None, outputCols: List[str] = None, ):
+        super(DerivedFeatureGenerator, self).__init__()
         kwargs = self._input_kwargs
         self.second_within_day = 60 * 60 * 24
         self.setParams(**kwargs)

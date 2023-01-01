@@ -31,6 +31,7 @@ class TrainingPipeline:
             data_valid_config:DataValidationConfig = self.config.get_data_validation_config()
             data_validator = DataValidation(valid_config=data_valid_config, ingest_artifact=dataingest_artifact)
             data_validation_artifact:DataValidationArtifact = data_validator.initiate_data_processing()
+            logger.info(f"Data Validation Artifact {data_validation_artifact}" )
             return data_validation_artifact
         except Exception as exp:
             raise FinanceException(exp, sys)
@@ -62,9 +63,8 @@ class TrainingPipeline:
             
             data_ingest_artifact = self.initiate_data_ingestion()
             data_validation_artifact=self.initiate_data_validation(data_ingest_artifact)
-            # data_transformation_artifact = self.initiate_data_transformation(data_valid_artifact=data_validation_artifact)
-            print(data_validation_artifact)
+            data_transformation_artifact = self.initiate_data_transformation(data_valid_artifact=data_validation_artifact)
             self.copy_logger_to_dump()
-            # return data_transformation_artifact
+            return data_transformation_artifact
         except Exception as exp:
             raise FinanceException(exp, sys)

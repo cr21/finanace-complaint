@@ -5,7 +5,8 @@ from src.entity.schema import FinanceDataSchema
 from src.exception import FinanceException
 from src.logger import logger
 from src.config.spark_manager import spark_session
-from pyspark.sql import DataFrame, col, rand
+from pyspark.sql import DataFrame
+from pyspark.sql.functions import col, rand
 from pyspark.ml.feature import IDF, Tokenizer, HashingTF
 from src.ml.feature import DerivedFeatureGenerator, FrequencyImputer, FrequencyImputerModel
 from pyspark.ml import Pipeline
@@ -68,8 +69,8 @@ class DataTransformer():
 
             # convert string indexer labels to one hot encoding labels
 
-            one_hot_encoder = OneHotEncoder(inputCol=self.schema.string_indexer_one_hot_features,
-            outputCol=self.schema.tf_one_hot_encoding_features)
+            one_hot_encoder = OneHotEncoder(inputCols=self.schema.string_indexer_one_hot_features,
+            outputCols=self.schema.tf_one_hot_encoding_features)
             stages.append(one_hot_encoder)
 
             # handling text features with TFIDF features
@@ -95,7 +96,8 @@ class DataTransformer():
                 stages=stages
             )
             logger.info(f"Data transformation pipeline: [{pipeline}]")
-            print(pipeline.stages)
+            logger.info(f"Stages : {stages}")
+            logger.info(f"Stages : {pipeline.stages}")
             return pipeline
 
         except Exception as exp:
