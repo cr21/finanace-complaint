@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List
 
 @dataclass
 class DataTransformationConfig:
@@ -38,3 +39,12 @@ class DataValidationConfig:
     accepted_data_dir:str
     rejected_data_dir:str
     file_name:str
+
+@dataclass
+class ModelTrainerConfig:
+    base_accuracy:float
+    label_indexer_model_dir:str
+    metric_list:List[str]
+    trained_model_file_path:str
+
+

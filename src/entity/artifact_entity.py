@@ -25,8 +25,24 @@ class DataTransformationArtifact:
     transformed_train_file_path:str
     exported_pipeline_file_path:str
     transformed_test_file_path:str
-    
 
+
+@dataclass
+class PartialModelTrainerMetricArtifact:
+    f1_score:float
+    precision_score:float
+    recall_score:float
+
+@dataclass
+class PartialModelTrainerRefArtifact:
+    trained_model_file_path:str
+    label_indexer_model_file_path:str
+
+@dataclass
+class ModelTrainingArtifact:
+    model_trainer_ref_artifact:PartialModelTrainerRefArtifact
+    model_trainer_train_metric_artifact:PartialModelTrainerMetricArtifact
+    model_trainer_test_metric_artifact:PartialModelTrainerMetricArtifact
 
 class DataIngestionMetadata:
     def __init__(self, meta_data_file_path) -> None:

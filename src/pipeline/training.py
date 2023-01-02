@@ -1,10 +1,11 @@
 
 from src.config.pipeline.training import FinanceConfig
-from src.entity.config_entity import DataIngestionConfig, DataValidationConfig, DataTransformationConfig
-from src.entity.artifact_entity import DataIngestionArtifact, DataValidationArtifact, DataTransformationArtifact
+from src.entity.config_entity import DataIngestionConfig, DataValidationConfig, DataTransformationConfig, ModelTrainerConfig
+from src.entity.artifact_entity import DataIngestionArtifact, DataValidationArtifact, DataTransformationArtifact, ModelTrainingArtifact
 from src.component.training.data_ingestion import DataIngestion
 from src.component.training.data_validation import DataValidation
 from src.component.training.data_transformer import DataTransformer
+from src.component.training.model_trainer import ModelTrainer
 # from src.com
 from src.exception import FinanceException
 import sys
@@ -56,7 +57,14 @@ class TrainingPipeline:
                 for line in contents:
                     f.write(line)
         
-
+    def initiate_model_training(self,data_transform_artifact:DataTransformationArtifact)->ModelTrainingArtifact:
+        try:
+            model_trainer_config:ModelTrainerConfig = self.config.get_model_training_config()
+            modeltrainer = ModelTrainer(model_trainer_config, data_transform_artifact)
+            trainer_artifact = modeltrainer.start_model_training()
+            return trainer_artifact
+        except Exception as exp:
+            raise FinanceException(exp, sys)
 
     def start(self):
         try:
@@ -64,7 +72,8 @@ class TrainingPipeline:
             data_ingest_artifact = self.initiate_data_ingestion()
             data_validation_artifact=self.initiate_data_validation(data_ingest_artifact)
             data_transformation_artifact = self.initiate_data_transformation(data_valid_artifact=data_validation_artifact)
+            model_trainer_artifact = self.initiate_model_training(data_transformation_artifact)
             self.copy_logger_to_dump()
-            return data_transformation_artifact
+            return model_trainer_artifact
         except Exception as exp:
             raise FinanceException(exp, sys)

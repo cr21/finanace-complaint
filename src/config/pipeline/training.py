@@ -1,7 +1,7 @@
 
 from src.constant.training_pipeline_config import * 
 from src.constant import TIMESTAMP
-from src.entity.config_entity import DataIngestionConfig, TrainingPipelineConfig, DataValidationConfig, DataTransformationConfig
+from src.entity.config_entity import DataIngestionConfig, TrainingPipelineConfig, DataValidationConfig, DataTransformationConfig, ModelTrainerConfig
 from src.entity.metadata_entity import DataIngestionMetadata
 from src.logger import logger
 import os, sys
@@ -91,15 +91,33 @@ class FinanceConfig:
 
     def get_data_validation_config(self)-> DataValidationConfig:
         try:
-            pass
+            data_validation_dir = os.path.join(self.pipeline_config.artifact_dir, DATA_VALIDATION_DIR, self.timestamp) 
+        
+            dv_config = DataValidationConfig(
+                                                accepted_data_dir=os.path.join(data_validation_dir,DATA_VALIDATION_ACCEPTED_DATA_DIR),
+                                                rejected_data_dir=os.path.join(data_validation_dir,DATA_VALIDATION_REJECTED_DATA_DIR),
+                                                file_name=DATA_VALIDATION_FILE_NAME
+                                            )
+            logger.info(f"Data Validation Config info: {dv_config}")
+            return dv_config
         except Exception as exp:
             raise FinanceException(exp, sys)
-        data_validation_dir = os.path.join(self.pipeline_config.artifact_dir, DATA_VALIDATION_DIR, self.timestamp) 
         
-        dv_config = DataValidationConfig(
-                                            accepted_data_dir=os.path.join(data_validation_dir,DATA_VALIDATION_ACCEPTED_DATA_DIR),
-                                            rejected_data_dir=os.path.join(data_validation_dir,DATA_VALIDATION_REJECTED_DATA_DIR),
-                                            file_name=DATA_VALIDATION_FILE_NAME
-                                        )
-        logger.info(f"Data Validation Config info: {dv_config}")
-        return dv_config
+
+
+    def get_model_training_config(self)-> ModelTrainerConfig:
+        try:
+            model_trainer_dir = os.path.join(self.pipeline_config.artifact_dir,MODEL_TRAINER_DIR, self.timestamp)
+            trained_model_file_path = os.path.join(model_trainer_dir, MODEL_TRAINER_TRAINED_MODEL_DIR,MODEL_TRAINER_MODEL_NAME)
+            label_indexer_model_dir = os.path.join(model_trainer_dir, MODEL_TRAINER_LABEL_INDEXER_DIR)
+            model_trainer_config = ModelTrainerConfig(base_accuracy=MODEL_TRAINER_BASE_ACCURACY,
+                                                     label_indexer_model_dir=label_indexer_model_dir,
+                                                     metric_list=MODEL_TRAINER_MODEL_METRIC_NAMES,
+                                                     trained_model_file_path=trained_model_file_path
+                                                    )
+            logger.info(f"Model trainer config: {model_trainer_config}")
+            return model_trainer_config
+            
+        except Exception as exp:
+            raise FinanceException(exp, sys)
+        
