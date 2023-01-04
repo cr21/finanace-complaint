@@ -10,7 +10,6 @@ def start_training(start=True):
 
         # if not start:
         #     return None
-        # print("Training Running")
         TrainingPipeline(FinanceConfig()).start()
     except Exception as exp:
         raise FinanceException(exp, sys)
@@ -18,7 +17,6 @@ def start_training(start=True):
 
 def main(training_status=False, prediction_status=True):
     try:
-        print("Start training")
         start_training(start=training_status)
     except Exception as e:
         raise FinanceException(e, sys)

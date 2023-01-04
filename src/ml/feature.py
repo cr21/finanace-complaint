@@ -29,7 +29,6 @@ class FrequencyImputer(Estimator,               # Base class
         self.topCategorys = Param(self, "topCategorys", "")
         self._setDefault(topCategorys="")
         kwargs = self._input_kwargs
-        # print(kwargs)
         self.setParams(**kwargs)
 
     @keyword_only
@@ -65,8 +64,6 @@ class FrequencyImputer(Estimator,               # Base class
                 desc('count'))
             topCat = categoryCountByDesc.take(1)[0][column]
             topCategorys.append(topCat)
-
-        #print(topCategorys)
 
         self.setTopCategorys(value=topCategorys)
 

@@ -6,7 +6,8 @@ from src.utils import read_yaml_file, write_yaml_file
 from  src.exception import FinanceException
 import sys
 from src.logger import logger
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from datetime import datetime
 
 @dataclass
 class DataIngestionArtifact:
@@ -37,6 +38,15 @@ class PartialModelTrainerMetricArtifact:
 class PartialModelTrainerRefArtifact:
     trained_model_file_path:str
     label_indexer_model_file_path:str
+
+@dataclass
+class ModelEvaluationArtifact:
+    model_accepted:str 
+    changed_accuracy:float
+    trained_model_path:str
+    best_model_path:str
+    active:bool
+    created_timestamp: datetime = field(default_factory=datetime.now)
 
 @dataclass
 class ModelTrainingArtifact:
@@ -75,4 +85,9 @@ class DataIngestionMetadata:
             return metadata_info
         except Exception as e:
             raise FinanceException(e, sys)
+
+
+@dataclass
+class ModelPusherArtifact:
+    model_pushed_dir:str
 

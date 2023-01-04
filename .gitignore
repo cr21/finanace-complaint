@@ -135,3 +135,4 @@ finance-artifact/*
 logs/
 demo
 demo2
+saved_models/*

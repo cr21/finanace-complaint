@@ -47,4 +47,16 @@ class ModelTrainerConfig:
     metric_list:List[str]
     trained_model_file_path:str
 
+@dataclass
+class ModelEvaluationConfig:
+    model_evaluation_report_file_path:str
+    threshold:float
+    metric_list:List[str]
+    model_dir:str
+    bucket_name:str
 
+
+@dataclass
+class ModelPusherConfig:
+    model_dir:str
+    bucket_name:str

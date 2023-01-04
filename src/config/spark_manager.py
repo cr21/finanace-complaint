@@ -27,4 +27,3 @@ spark_session._jsc.hadoopConfiguration().set("fs.s3a.aws.credentials.provider","
 spark_session._jsc.hadoopConfiguration().set("fs.s3a.endpoint", "ap-south-1.amazonaws.com")
 spark_session._jsc.hadoopConfiguration().set(" fs.s3.buffer.dir","tmp")
 
-print("SparkSession", spark_session)

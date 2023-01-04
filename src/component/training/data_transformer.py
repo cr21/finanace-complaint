@@ -150,11 +150,9 @@ class DataTransformer():
             transformed_pipeline.save(self.transform_config.exported_pipeline_dir)
 
             logger.info(f"Saving transformed train data at: [{transformed_train_data_file_path}]")
-            print(transformed_train_df.count(), len(transformed_train_df.columns))
             transformed_train_df.write.parquet(transformed_train_data_file_path)
 
             logger.info(f"Saving transformed test data at: [{transformed_test_data_file_path}]")
-            print(transformed_test_df.count(), len(transformed_test_df.columns))
             transformed_test_df.write.parquet(transformed_test_data_file_path)
 
             data_tf_artifact = DataTransformationArtifact(

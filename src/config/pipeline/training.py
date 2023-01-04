@@ -1,13 +1,15 @@
 
 from src.constant.training_pipeline_config import * 
 from src.constant import TIMESTAMP
-from src.entity.config_entity import DataIngestionConfig, TrainingPipelineConfig, DataValidationConfig, DataTransformationConfig, ModelTrainerConfig
+from src.entity.config_entity import DataIngestionConfig, TrainingPipelineConfig, DataValidationConfig, \
+    DataTransformationConfig, ModelTrainerConfig,ModelEvaluationConfig, ModelPusherConfig
 from src.entity.metadata_entity import DataIngestionMetadata
 from src.logger import logger
 import os, sys
 import requests
 from src.exception import FinanceException
 import json
+from src.constant.model import S3_MODEL_BUCKET_NAME,S3_MODEL_DIR_KEY
 from datetime import datetime
 
 
@@ -118,6 +120,33 @@ class FinanceConfig:
             logger.info(f"Model trainer config: {model_trainer_config}")
             return model_trainer_config
             
+        except Exception as exp:
+            raise FinanceException(exp, sys)
+
+    def get_model_evaluation_config(self)-> ModelEvaluationConfig:
+        try:
+            model_evaluation_dir = os.path.join(self.pipeline_config.artifact_dir,MODEL_EVALUATION_DIR,self.timestamp)
+            model_evaluation_report_file_path=os.path.join(model_evaluation_dir,MODEL_EVALUATION_REPORT_DIR, MODEL_EVALUATION_REPORT_FILE_NAME)
+            model_eval_config = ModelEvaluationConfig(
+                                                        model_evaluation_report_file_path=model_evaluation_report_file_path,
+                                                        threshold=MODEL_EVALUATION_THRESHOLD_VALUE,
+                                                        metric_list=MODEL_EVALUATION_METRIC_NAMES,
+                                                        model_dir=S3_MODEL_DIR_KEY,
+                                                        bucket_name=S3_MODEL_BUCKET_NAME
+                                                    )
+            logger.info(f"Model evaluation config: [{model_eval_config}]")
+            return model_eval_config
+        except Exception as exp:
+            raise FinanceException(exp, sys)
+
+    def get_model_pusher_config(self)-> ModelPusherConfig:
+        try:
+            model_pusher_config = ModelPusherConfig(
+                model_dir=S3_MODEL_DIR_KEY,
+                bucket_name=S3_MODEL_BUCKET_NAME
+            )
+            logger.info(f"Model pusher config: {model_pusher_config}")
+            return model_pusher_config
         except Exception as exp:
             raise FinanceException(exp, sys)
         

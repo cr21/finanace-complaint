@@ -46,7 +46,6 @@ def get_score(metric_name:str,dataframe:DataFrame,label_col:str,prediction_col:s
             labelCol=label_col, predictionCol=prediction_col,
             metricName=metric_name)
         score = evaluator.evaluate(dataframe)
-        print(f"{metric_name} score: {score}")
         logger.info(f"{metric_name} score: {score}")
         return score
     except Exception as exp:

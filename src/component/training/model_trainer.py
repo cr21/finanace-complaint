@@ -28,7 +28,6 @@ class ModelTrainer:
             test_data_path = self.transform_artifact.transformed_test_file_path
             train_df  = spark_session.read.parquet(train_data_path)
             test_df = spark_session.read.parquet(test_data_path)
-            print(f"Train row: {train_df.count()} Test row: {test_df.count()}")
             dataframes: List[DataFrame] = [train_df, test_df]
             return dataframes
         except Exception as exp:
@@ -100,7 +99,6 @@ class ModelTrainer:
             # 1 get Train test dataframe
             dataframes = self.get_train_test_dataframe()
             train_df, test_df = dataframes[0], dataframes[1]
-            print(f"Train row: {train_df.count()} Test row: {test_df.count()}")
             label_indexer = StringIndexer(inputCol=self.schema.target_column, outputCol=self.schema.target_indexed_label)
             label_indexer_model = label_indexer.fit(train_df)
             # save label indexer
@@ -116,9 +114,7 @@ class ModelTrainer:
             trained_model = model.fit(train_df)
             train_df_prediction = trained_model.transform(train_df)
             test_df_prediction  = trained_model.transform(test_df)
-            print(f"number of row in training: {train_df.count()}")
             scores = self.get_scores(dataframe=train_df_prediction, metric_names=self.trainer_config.metric_list)
-            print("scores", scores)
             
 
             # 3. trained Model
@@ -129,8 +125,7 @@ class ModelTrainer:
 
             logger.info(f"Model trainer train metric: {train_metric_artifact}")
 
-            print(f"number of row in training: {train_df_prediction.count()}")
-
+            
             scores = self.get_scores(dataframe=test_df_prediction,metric_names=self.trainer_config.metric_list)
             
             test_metric_artifact = PartialModelTrainerMetricArtifact(f1_score=scores[0][1],
