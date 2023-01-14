@@ -93,13 +93,13 @@ class TrainingPipeline:
     def start(self):
         try:
             
-            # data_ingest_artifact = self.initiate_data_ingestion()
-            # data_validation_artifact=self.initiate_data_validation(data_ingest_artifact)
-            # data_transformation_artifact = self.initiate_data_transformation(data_valid_artifact=data_validation_artifact)
-            # model_trainer_artifact = self.initiate_model_training(data_transformation_artifact)
-            model_trainer_artifact = ModelTrainingArtifact(model_trainer_ref_artifact=PartialModelTrainerRefArtifact(trained_model_file_path='/Users/chiragtagadiya/datascience_projects/my_projects/finanace-complaint/finance-artifact/model_trainer/20230103_211304/trained_model/finance_estimator', label_indexer_model_file_path='/Users/chiragtagadiya/datascience_projects/my_projects/finanace-complaint/finance-artifact/model_trainer/20230103_211304/label_indexer'), model_trainer_train_metric_artifact=PartialModelTrainerMetricArtifact(f1_score=1.0, precision_score=1.0, recall_score=1.0), model_trainer_test_metric_artifact=PartialModelTrainerMetricArtifact(f1_score=1.0, precision_score=1.0, recall_score=1.0))
+            data_ingest_artifact = self.initiate_data_ingestion()
+            data_validation_artifact=self.initiate_data_validation(data_ingest_artifact)
+            data_transformation_artifact = self.initiate_data_transformation(data_valid_artifact=data_validation_artifact)
+            model_trainer_artifact = self.initiate_model_training(data_transformation_artifact)
+            #model_trainer_artifact = ModelTrainingArtifact(model_trainer_ref_artifact=PartialModelTrainerRefArtifact(trained_model_file_path='/Users/chiragtagadiya/datascience_projects/my_projects/finanace-complaint/finance-artifact/model_trainer/20230103_211304/trained_model/finance_estimator', label_indexer_model_file_path='/Users/chiragtagadiya/datascience_projects/my_projects/finanace-complaint/finance-artifact/model_trainer/20230103_211304/label_indexer'), model_trainer_train_metric_artifact=PartialModelTrainerMetricArtifact(f1_score=1.0, precision_score=1.0, recall_score=1.0), model_trainer_test_metric_artifact=PartialModelTrainerMetricArtifact(f1_score=1.0, precision_score=1.0, recall_score=1.0))
             
-            data_validation_artifact = DataValidationArtifact(accepted_file_path='/Users/chiragtagadiya/datascience_projects/my_projects/finanace-complaint/finance-artifact/data_validation/20230103_211304/accepted_data/finanace_complaint', rejected_dir='/Users/chiragtagadiya/datascience_projects/my_projects/finanace-complaint/finance-artifact/data_validation/20230103_211304/rejected_data')
+            #data_validation_artifact = DataValidationArtifact(accepted_file_path='/Users/chiragtagadiya/datascience_projects/my_projects/finanace-complaint/finance-artifact/data_validation/20230103_211304/accepted_data/finanace_complaint', rejected_dir='/Users/chiragtagadiya/datascience_projects/my_projects/finanace-complaint/finance-artifact/data_validation/20230103_211304/rejected_data')
             model_evalution_artifact = self.initiate_model_evaluation(data_validation_artifact, model_trainer_artifact)
             if model_evalution_artifact.model_accepted:
                 model_pusher_artifact=self.start_model_pusher(model_trainer_artifact=model_trainer_artifact)
